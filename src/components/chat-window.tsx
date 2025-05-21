@@ -536,12 +536,12 @@ export default function ChatWindow({
               Private Note
             </button>
           </div>
-          <div className="p-3 flex items-center">
-            <div className="flex-1">
+          <div className="p-3 flex-col flex items-center">
+            <div className="flex w-full">
               <input
                 type="text"
                 placeholder="Message..."
-                className="w-full p-2 outline-none text-sm"
+                className="w-full py-2 pr-2 outline-none text-sm"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -555,8 +555,20 @@ export default function ChatWindow({
                 multiple
                 accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
               />
+              <button
+                className={cn(
+                  "text-green-600 cursor-pointer",
+                  isUploading && "opacity-50"
+                )}
+                onClick={handleSendMessage}
+                disabled={
+                  isUploading || (!message.trim() && attachments.length === 0)
+                }
+              >
+                <Send size={20} />
+              </button>
             </div>
-            <div className="flex items-center space-x-3 text-gray-500">
+            <div className="flex items-start w-full mt-2 space-x-4 text-gray-500">
               <button onClick={triggerFileInput} disabled={isUploading}>
                 <Paperclip size={20} />
               </button>
@@ -571,15 +583,6 @@ export default function ChatWindow({
               </button>
               <button disabled={isUploading}>
                 <Mic size={20} />
-              </button>
-              <button
-                className={cn("text-green-600", isUploading && "opacity-50")}
-                onClick={handleSendMessage}
-                disabled={
-                  isUploading || (!message.trim() && attachments.length === 0)
-                }
-              >
-                <Send size={20} />
               </button>
             </div>
           </div>
