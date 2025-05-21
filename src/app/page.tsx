@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-
+import Sidebar from "@/components/sidebar";
+import ChatWindow from "@/components/chat-window";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-
+import type { Chat, User, Message, Label, ChatParticipant } from "@/lib/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -24,12 +25,12 @@ export default function Home() {
   const router = useRouter();
   const supabase = createClientComponentClient();
 
-  // for development only (hydration errors)
+  // Set isMounted to true when component mounts (client-side only)
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // user auth status
+  // Check authentication status
   useEffect(() => {
     if (!isMounted) return;
 
@@ -43,6 +44,7 @@ export default function Home() {
         return;
       }
 
+      // Get current user details
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("*")
@@ -56,7 +58,7 @@ export default function Home() {
 
       setUser(userData);
 
-      //get chats and users
+      // Fetch chats and users
       await fetchChats();
       await fetchUsers();
 
@@ -66,7 +68,7 @@ export default function Home() {
     checkUser();
   }, [isMounted, router, supabase]);
 
-  // update activeChatRef when activeChat changes
+  // Update activeChatRef when activeChat changes
   useEffect(() => {
     if (activeChat) {
       activeChatRef.current = activeChat.id;
@@ -80,7 +82,7 @@ export default function Home() {
     }
   }, [activeChat]);
 
-  // fetch chats
+  // Fetch chats
   const fetchChats = async () => {
     setError(null);
     const {
@@ -89,13 +91,13 @@ export default function Home() {
     if (!session) return;
 
     try {
-      // get all chats where the current user is a participant
+      // Get all chats where the current user is a participant
       let query = supabase
         .from("chat_participants")
         .select("chat_id")
         .eq("user_id", session.user.id);
 
-      // only select last_read if we know it's available
+      // Only select last_read if we know it's available
       if (isLastReadAvailable) {
         query = query.select("chat_id, last_read");
       }
@@ -103,7 +105,7 @@ export default function Home() {
       const { data: chatParticipants, error: participantsError } = await query;
 
       if (participantsError) {
-        // check if the error is about the missing last_read column
+        // Check if the error is about the missing last_read column
         if (
           participantsError.message &&
           participantsError.message.includes("last_read")
@@ -127,6 +129,7 @@ export default function Home() {
 
       const chatIds = chatParticipants.map((cp: ChatParticipant) => cp.chat_id);
 
+      // Get chat details
       const { data: chatData, error: chatError } = await supabase
         .from("chats")
         .select("*")
@@ -138,10 +141,10 @@ export default function Home() {
         return;
       }
 
-      // get last message for each chat
+      // Get last message for each chat
       const chatsWithMessages = await Promise.all(
         chatData.map(async (chat) => {
-          // get last message
+          // Get last message
           const { data: lastMessageData, error: lastMessageError } =
             await supabase
               .from("messages")
@@ -151,7 +154,7 @@ export default function Home() {
               .limit(1)
               .maybeSingle();
 
-          // get participants
+          // Get participants
           const { data: participants, error: participantsError } =
             await supabase
               .from("chat_participants")
@@ -168,7 +171,7 @@ export default function Home() {
           // Get labels for this chat - handle the case where labels table might not exist yet
           let labels: Label[] = [];
           try {
-            // first try to get labels using the new schema (with label_id)
+            // First try to get labels using the new schema (with label_id)
             const { data: chatLabelsData, error: chatLabelsError } =
               await supabase
                 .from("chat_labels")
@@ -182,14 +185,14 @@ export default function Home() {
             ) {
               // If we have data with the new schema
               labels = chatLabelsData
-                .filter((cl: any) => cl.labels) // filter out any null labels
+                .filter((cl: any) => cl.labels) // Filter out any null labels
                 .map((cl: any) => ({
                   id: cl.labels.id,
                   name: cl.labels.name,
                   color: cl.labels.color,
                 }));
             } else {
-              // try the old schema with direct label column
+              // Try the old schema with direct label column
               const { data: oldLabelsData, error: oldLabelsError } =
                 await supabase
                   .from("chat_labels")
@@ -199,14 +202,15 @@ export default function Home() {
               if (!oldLabelsError && oldLabelsData) {
                 // For old schema, we'll use a default color since we don't have color info
                 labels = oldLabelsData.map((cl: any) => ({
-                  id: cl.label,
+                  id: cl.label, // Use label as ID
                   name: cl.label,
-                  color: "bg-gray-100 text-gray-600 border-gray-200", // default color
+                  color: "bg-gray-100 text-gray-600 border-gray-200", // Default color
                 }));
               }
             }
           } catch (error) {
             console.warn("Labels functionality not available yet:", error);
+            // Continue without labels if there's an error
           }
 
           if (lastMessageError && lastMessageError.code !== "PGRST116") {
@@ -235,7 +239,7 @@ export default function Home() {
           // Count unread messages - handle case where last_read is not available
           let unreadCount = 0;
           if (isLastReadAvailable) {
-            // get the last read timestamp for this chat
+            // Get the last read timestamp for this chat
             const chatParticipant = chatParticipants.find(
               (cp: ChatParticipant) => cp.chat_id === chat.id
             );
@@ -264,7 +268,7 @@ export default function Home() {
               : 0;
           }
 
-          // if this is the active chat, mark it as read
+          // If this is the active chat, mark it as read
           if (activeChatRef.current === chat.id) {
             unreadCount = 0;
           }
@@ -319,7 +323,7 @@ export default function Home() {
     }
   };
 
-  // fetch users
+  // Fetch users
   const fetchUsers = async () => {
     const { data: userData, error: userError } = await supabase
       .from("users")
@@ -342,7 +346,7 @@ export default function Home() {
     setUsers(formattedUsers);
   };
 
-  // supabase real-time subscriptions
+  // Set up real-time subscriptions
   useEffect(() => {
     if (!isMounted || !user) return;
 
@@ -615,9 +619,27 @@ export default function Home() {
         </Alert>
       )}
 
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-gray-500">Select a chat to start messaging</p>
-      </div>
+      <Sidebar
+        chats={chats}
+        onChatSelect={handleChatSelect}
+        activeChat={activeChat}
+        currentUser={user}
+        onChatCreated={fetchChats}
+        unreadCounts={unreadCounts}
+        totalUnread={totalUnread}
+      />
+      {activeChat ? (
+        <ChatWindow
+          chat={activeChat}
+          users={users}
+          currentUser={user}
+          onMessageSent={handleMessageSent}
+        />
+      ) : (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500">Select a chat to start messaging</p>
+        </div>
+      )}
     </div>
   );
 }
