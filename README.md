@@ -1,5 +1,13 @@
 ## Periskope Chat App Features
 
+## Please use these test cred for testing the app(realtime functionalities, file sharing etc)
+
+mahendrabrowny@gmail.com
+pass- 12345678
+
+jeff@amazon.com
+pass- 12345678
+
 ### Real-time Messaging
 
 - Instant message delivery and updates
