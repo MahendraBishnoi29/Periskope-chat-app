@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,42 +10,46 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { User, LogOut, Settings, UserCircle } from "lucide-react"
-import type { User as UserType } from "@/lib/types"
+} from "@/components/ui/dropdown-menu";
+import { User, LogOut, Settings, UserCircle } from "lucide-react";
+import type { User as UserType } from "@/lib/types";
 
 interface UserMenuProps {
-  user: UserType | null
+  user: UserType | null;
 }
 
 export default function UserMenu({ user }: UserMenuProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClientComponentClient()
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false);
+  const supabase = createClientComponentClient();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      setIsLoading(true)
-      const { error } = await supabase.auth.signOut()
+      setIsLoading(true);
+      const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error("Error logging out:", error)
-        return
+        console.error("Error logging out:", error);
+        return;
       }
 
-      router.push("/auth")
+      router.push("/auth");
     } catch (err) {
-      console.error("Unexpected error during logout:", err)
+      console.error("Unexpected error during logout:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+        <button className="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
           {user?.avatar ? (
-            <img src={user.avatar || "/placeholder.svg"} alt={user.name} className="w-10 h-10 rounded-full" />
+            <img
+              src={user.avatar || "/placeholder.svg"}
+              alt={user.name}
+              className="w-10 h-10 rounded-full"
+            />
           ) : (
             <UserCircle className="w-6 h-6 text-gray-500" />
           )}
@@ -59,20 +63,15 @@ export default function UserMenu({ user }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/profile")}>
+        <DropdownMenuItem>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/settings")}>
+        <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} disabled={isLoading} className="text-red-500 focus:text-red-500">
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>{isLoading ? "Logging out..." : "Logout"}</span>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

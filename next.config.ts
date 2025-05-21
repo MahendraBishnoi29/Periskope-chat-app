@@ -8,8 +8,12 @@ const nextConfig: NextConfig = {
         hostname: "kdyadcpyuiicxwjvlhiv.supabase.co",
         pathname: "/storage/v1/object/public/chat-attachments/**",
       },
+      {
+        protocol: "https",
+        hostname: "mhnxswgvwtkrobpnsect.supabase.co",
+        pathname: "/storage/v1/object/public/chat-attachments/**",
+      },
     ],
   },
 };
-
 export default nextConfig;

@@ -1,44 +1,51 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { Chat, User, Label } from "@/lib/types";
-import {
-  Home,
-  MessageCircle,
-  LineChart,
-  Users,
-  List,
-  Bell,
-  Settings,
-  Search,
-  Circle,
-  Phone,
-  Plus,
-  UserPlus,
-  UserCheck,
-  AlertCircle,
-  LogOut,
-} from "lucide-react";
-import Image from "next/image";
-import { formatDate, cn } from "@/lib/utils";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "react";
+import { AiFillMessage, AiOutlineLineChart } from "react-icons/ai";
+import { BsFillMegaphoneFill } from "react-icons/bs";
+import { IoMdHome } from "react-icons/io";
+import { IoSettingsSharp, IoTicket } from "react-icons/io5";
+import { MdChecklist } from "react-icons/md";
+import { PiNetworkLight } from "react-icons/pi";
+import { RiContactsBookFill, RiFolderImageFill } from "react-icons/ri";
+import { TfiMenuAlt } from "react-icons/tfi";
+import { TbMessageCirclePlus } from "react-icons/tb";
+import { ImFolderDownload } from "react-icons/im";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label as LabelComponent } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Chat, Label, User } from "@/lib/types";
+import { cn, formatDate } from "@/lib/utils";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import {
+  AlertCircle,
+  Bell,
+  Circle,
+  LogOut,
+  MessageCircle,
+  Phone,
+  Plus,
+  Search,
+  UserCheck,
+  UserPlus,
+} from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import LabelManager from "./label-manager";
+import { v4 as uuidv4 } from "uuid";
 import LabelFilter from "./label-filter";
+import LabelManager from "./label-manager";
+import UserMenu from "./user-menu";
 
 interface SidebarProps {
   chats: Chat[];
@@ -49,6 +56,26 @@ interface SidebarProps {
   unreadCounts?: Record<string, number>;
   totalUnread?: number;
 }
+
+export const SidebarDividerComponent = ({
+  children,
+  hasBorder = true,
+  className,
+}: Readonly<{
+  children: React.ReactNode;
+  hasBorder?: boolean;
+  className?: string;
+}>) => {
+  return (
+    <div
+      className={`w-full flex flex-col items-center space-y-6 ${
+        hasBorder && "border-b border-gray-300"
+      } py-3 ${className}`}
+    >
+      {children}
+    </div>
+  );
+};
 
 export default function Sidebar({
   chats,
@@ -477,34 +504,57 @@ export default function Sidebar({
   };
 
   return (
-    <div className="flex h-full">
+    <aside className="flex h-full">
       {/* Left navigation bar */}
-      <div className="w-14 bg-white border-r flex flex-col items-center py-4 space-y-6">
-        <div className="w-8 h-8 rounded-md bg-green-600 flex items-center justify-center">
-          <MessageCircle size={18} className="text-white" />
-        </div>
-        <div className="flex flex-col space-y-6 items-center">
-          <Home size={20} className="text-gray-500" />
-          <div className="relative">
-            <MessageCircle size={20} className="text-green-600" />
-            {totalUnread > 0 && (
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs">{totalUnread}</span>
+      <div className="w-14 bg-white border-r flex flex-col items-center pb-4 space-y-6">
+        <div className="flex flex-col items-center">
+          <Image
+            src="/logo.webp"
+            alt="App Logo"
+            width={32}
+            className="pt-2 pb-2.5"
+            height={22}
+          />
+          <SidebarDividerComponent>
+            <IoMdHome size={24} className="text-[#128C7E]" />
+          </SidebarDividerComponent>
+          <SidebarDividerComponent>
+            <div className="relative">
+              <div className="w-fit px-2 py-1 rounded-md h-fit bg-slate-100 cursor-pointer">
+                <AiFillMessage size={21} className="text-[#15803D]" />
               </div>
-            )}
-          </div>
-          <LineChart size={20} className="text-gray-500" />
-          <List size={20} className="text-gray-500" />
-          <Users size={20} className="text-gray-500" />
-          <Bell size={20} className="text-gray-500" />
-          <Settings size={20} className="text-gray-500" />
+              {totalUnread > 0 && (
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs">{totalUnread}</span>
+                </div>
+              )}
+            </div>
+
+            <IoTicket size={24} className="text-[#128C7E]" />
+            <AiOutlineLineChart size={24} className="text-[#128C7E]" />
+          </SidebarDividerComponent>
+          <SidebarDividerComponent>
+            <TfiMenuAlt size={21} className="text-[#128C7E]" />
+            <BsFillMegaphoneFill size={21} className="text-[#128C7E]" />
+            <PiNetworkLight size={24} className="text-[#128C7E]" />
+          </SidebarDividerComponent>
+          <SidebarDividerComponent>
+            <RiContactsBookFill size={22} className="text-[#128C7E]" />
+            <RiFolderImageFill size={22} className="text-[#128C7E]" />
+          </SidebarDividerComponent>
+          <SidebarDividerComponent hasBorder={false}>
+            <MdChecklist size={24} className="text-[#128C7E]" />
+
+            <IoSettingsSharp size={24} className="text-[#128C7E]" />
+          </SidebarDividerComponent>
         </div>
 
         {/* Logout button at the bottom */}
-        <div className="mb-4">
+        <div className="mt-auto flex items-center flex-col  space-y-2 mb-2.5">
+          <UserMenu user={currentUser} />
           <button
             onClick={() => setIsLogoutDialogOpen(true)}
-            className="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-md hover:bg-gray-100"
+            className="text-gray-500 cursor-pointer hover:text-red-500 transition-colors p-2 rounded-md hover:bg-gray-100"
             title="Logout"
           >
             <LogOut size={20} />
@@ -513,25 +563,13 @@ export default function Sidebar({
       </div>
 
       {/* Chat list */}
-      <div className="w-80 border-r overflow-hidden flex flex-col">
+      <div className="w-80 relative border-r overflow-hidden flex flex-col">
         <div className="p-3 border-b flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <MessageCircle size={16} className="text-gray-500" />
             <span className="text-gray-500 text-sm font-medium">chats</span>
           </div>
           <div className="flex items-center space-x-2">
-            <button
-              className="text-gray-500 hover:text-green-600"
-              onClick={() => setIsCreateChatOpen(true)}
-            >
-              <Plus size={16} />
-            </button>
-            <button
-              className="text-gray-500 hover:text-green-600"
-              onClick={openCreateGroupDialog}
-            >
-              <UserPlus size={16} />
-            </button>
             <button className="text-gray-500">
               <Bell size={16} />
             </button>
@@ -539,10 +577,12 @@ export default function Sidebar({
         </div>
 
         <div className="p-3 border-b">
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="flex items-center space-x-1 px-2 py-1 bg-green-100 rounded-md">
-              <Circle size={14} className="text-green-600" />
-              <span className="text-green-600 text-xs">Custom filter</span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-1 ">
+              <ImFolderDownload size={14} className="text-[#14813A]" />
+              <span className="text-[#14813A] font-semibold text-xs">
+                Custom filter
+              </span>
             </div>
             {activeChat && (
               <LabelManager
@@ -678,6 +718,25 @@ export default function Sidebar({
             );
           })}
         </div>
+
+        {/* Floating action button for creating new chat and group */}
+        <div className="absolute bottom-6 right-4">
+          <button
+            onClick={() => setIsCreateChatOpen(true)}
+            className="w-10 cursor-pointer h-10 rounded-full bg-green-600 flex items-center justify-center shadow-lg hover:bg-green-700 transition-colors"
+          >
+            <TbMessageCirclePlus size={20} className="text-white" />
+          </button>
+        </div>
+
+        <div className="absolute bottom-20 right-4">
+          <button
+            className="w-10 cursor-pointer h-10 rounded-full bg-green-600 flex items-center justify-center shadow-lg hover:bg-green-700 transition-colors"
+            onClick={openCreateGroupDialog}
+          >
+            <UserPlus size={18} className="text-white" />
+          </button>
+        </div>
       </div>
 
       {/* Create Chat Dialog */}
@@ -748,8 +807,11 @@ export default function Sidebar({
                     {/* Selected user display */}
                     {selectedUser && (
                       <div className="mt-2 p-2 border rounded-md bg-green-50">
-                        <p className="text-sm font-medium">
-                          Selected: {selectedUser.name}
+                        <p className="text-xs">
+                          Create Chat With:{" "}
+                          <span className=" text-sm font-medium">
+                            {selectedUser.name}
+                          </span>
                         </p>
                       </div>
                     )}
@@ -907,6 +969,6 @@ export default function Sidebar({
           </Dialog>
         </>
       )}
-    </div>
+    </aside>
   );
 }
