@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Periskope Chat App Features
 
-## Getting Started
+### Real-time Messaging
 
-First, run the development server:
+- Instant message delivery and updates
+- Read receipts with checkmarks
+- Message timestamps
+- Date separators for conversation clarity
+- Support for private and group conversations
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Rich Media Support
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Send and receive images with preview
+- Video playback
+- Message timestamps
+- Document attachments (PDF, Word, text files)
+- File preview and download options
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Group Chat Capabilities
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Create and manage group conversations
+- Member list viewing
 
-## Learn More
+### Message Organization
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Custom labels for chats (color-coded)
+- Create, edit, and delete custom labels
+- Assign multiple labels to conversations
+- Label filtering system for chats and groups
