@@ -37,6 +37,8 @@ import { Label as LabelComponent } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
+import LabelManager from "./label-manager";
+import LabelFilter from "./label-filter";
 
 interface SidebarProps {
   chats: Chat[];
@@ -75,11 +77,12 @@ export default function Sidebar({
   const supabase = createClientComponentClient();
   const router = useRouter();
 
+  // Set isMounted to true when component mounts (client-side only)
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // verify authentication on mount
+  // Verify authentication on mount
   useEffect(() => {
     if (!isMounted) return;
 
@@ -142,8 +145,9 @@ export default function Sidebar({
     }
   }, [isMounted, supabase]);
 
-  // filter chats based on search text and selected labels
+  // Filter chats based on search text and selected labels
   const filteredChats = chats.filter((chat) => {
+    // Text filter
     const matchesText =
       chat.name.toLowerCase().includes(filter.toLowerCase()) ||
       chat.participants.some((p) =>
@@ -153,6 +157,7 @@ export default function Sidebar({
         l.name.toLowerCase().includes(filter.toLowerCase())
       );
 
+    // Label filter
     const matchesLabels =
       selectedLabelIds.length === 0 ||
       chat.labels.some((label) => selectedLabelIds.includes(label.id));
@@ -160,7 +165,7 @@ export default function Sidebar({
     return matchesText && matchesLabels;
   });
 
-  // search for users as the user types
+  // Search for users as the user types
   useEffect(() => {
     if (!newChatName.trim() || newChatName.length < 2) {
       setSearchResults([]);
@@ -182,7 +187,7 @@ export default function Sidebar({
         return;
       }
 
-      // filter out current user from results
+      // Filter out current user from results
       const filteredUsers = userData.filter(
         (user) => user.id !== currentUser?.id
       );
@@ -417,7 +422,7 @@ export default function Sidebar({
     if (!isMounted) return;
     setError(null);
 
-    // available users
+    // Fetch available users
     const { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
@@ -496,7 +501,7 @@ export default function Sidebar({
         </div>
 
         {/* Logout button at the bottom */}
-        <div className="mt-auto mb-4">
+        <div className="mb-4">
           <button
             onClick={() => setIsLogoutDialogOpen(true)}
             className="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-md hover:bg-gray-100"
@@ -539,6 +544,13 @@ export default function Sidebar({
               <Circle size={14} className="text-green-600" />
               <span className="text-green-600 text-xs">Custom filter</span>
             </div>
+            {activeChat && (
+              <LabelManager
+                chatId={activeChat.id}
+                currentLabels={activeChat.labels}
+                onLabelsUpdated={onChatCreated}
+              />
+            )}
           </div>
           <div className="flex items-center space-x-2">
             <div className="flex-1 relative">
@@ -554,6 +566,10 @@ export default function Sidebar({
                 onChange={(e) => setFilter(e.target.value)}
               />
             </div>
+            <LabelFilter
+              onFilterChange={handleFilterChange}
+              selectedLabelIds={selectedLabelIds}
+            />
           </div>
         </div>
 
