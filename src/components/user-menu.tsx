@@ -1,8 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings, UserCircle } from "lucide-react";
 import type { User as UserType } from "@/lib/types";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Settings, User, UserCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface UserMenuProps {
   user: UserType | null;

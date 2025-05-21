@@ -1,21 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { v4 as uuidv4 } from "uuid";
-import { X, Plus, Check, Pencil, AlertCircle } from "lucide-react";
-import type { Label as LabelType, LabelRecord } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import type { LabelRecord, Label as LabelType } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { AlertCircle, Check, Pencil, Plus, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface LabelManagerProps {
   chatId: string;
@@ -293,7 +294,7 @@ export default function LabelManager({
               <AlertCircle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-700">
                 <p className="mb-2">
-                  There's a database schema mismatch. Please run the following
+                  There is a database schema mismatch. Please run the following
                   SQL script in your Supabase SQL Editor to update your schema:
                 </p>
                 <pre className="bg-gray-800 text-white p-2 rounded text-xs overflow-auto"></pre>

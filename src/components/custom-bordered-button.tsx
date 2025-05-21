@@ -21,7 +21,7 @@ const BorderButton = ({
   icon?: IconType;
   text?: string;
   type?: BUTTON_CONTENT;
-  onClickFunc?: Function;
+  onClickFunc?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   color?: string;
   className?: string;
   size?: number;
@@ -50,5 +50,4 @@ const BorderButton = ({
     </button>
   );
 };
-
 export default BorderButton;

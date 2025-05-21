@@ -1,16 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
 import { AiFillMessage, AiOutlineLineChart } from "react-icons/ai";
 import { BsFillMegaphoneFill } from "react-icons/bs";
+import { ImFolderDownload } from "react-icons/im";
 import { IoMdHome } from "react-icons/io";
 import { IoSettingsSharp, IoTicket } from "react-icons/io5";
 import { MdChecklist } from "react-icons/md";
 import { PiNetworkLight } from "react-icons/pi";
 import { RiContactsBookFill, RiFolderImageFill } from "react-icons/ri";
-import { TfiMenuAlt } from "react-icons/tfi";
 import { TbMessageCirclePlus } from "react-icons/tb";
-import { ImFolderDownload } from "react-icons/im";
+import { TfiMenuAlt } from "react-icons/tfi";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -31,11 +33,9 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
   AlertCircle,
   Bell,
-  Circle,
   LogOut,
   MessageCircle,
   Phone,
-  Plus,
   Search,
   UserCheck,
   UserPlus,
@@ -145,8 +145,7 @@ export default function Sidebar({
           // Try the old schema as fallback
           const { data: oldSchemaData, error: oldSchemaError } = await supabase
             .from("chat_labels")
-            .select("label")
-            .distinct();
+            .select("distinct label");
 
           if (!oldSchemaError && oldSchemaData) {
             // Convert old schema data to label format
@@ -154,9 +153,9 @@ export default function Sidebar({
               ...new Set(oldSchemaData.map((item: any) => item.label)),
             ];
             setAllLabels(
-              uniqueLabels.map((label: string) => ({
-                id: label,
-                name: label,
+              uniqueLabels.map((label: unknown) => ({
+                id: String(label),
+                name: String(label),
                 color: "bg-gray-100 text-gray-600 border-gray-200", // Default color
               }))
             );
@@ -166,7 +165,6 @@ export default function Sidebar({
         console.error("Error fetching all labels:", err);
       }
     };
-
     if (isMounted) {
       fetchAllLabels();
     }

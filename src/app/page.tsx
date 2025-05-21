@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -8,6 +9,7 @@ import { useRouter } from "next/navigation";
 import type { Chat, User, Message, Label, ChatParticipant } from "@/lib/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 export default function Home() {
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
@@ -334,7 +336,7 @@ export default function Home() {
       return;
     }
 
-    const formattedUsers: User[] = userData.map((user: any) => ({
+    const formattedUsers: User[] = userData.map((user: User) => ({
       id: user.id,
       name: user.name,
       avatar: user.avatar,
@@ -350,9 +352,9 @@ export default function Home() {
   useEffect(() => {
     if (!isMounted || !user) return;
 
-    let messagesSubscription: any = null;
-    let chatsSubscription: any = null;
-    let labelsSubscription: any = null;
+    let messagesSubscription: RealtimeChannel | null = null;
+    let chatsSubscription: RealtimeChannel | null = null;
+    let labelsSubscription: RealtimeChannel | null = null;
 
     // Only set up subscriptions on the client side
     const setupSubscriptions = async () => {
@@ -520,7 +522,6 @@ export default function Home() {
       if (labelsSubscription) supabase.removeChannel(labelsSubscription);
     };
   }, [isMounted, user, chats, activeChat, supabase]);
-
   const handleChatSelect = (chat: Chat) => {
     setActiveChat(chat);
 
