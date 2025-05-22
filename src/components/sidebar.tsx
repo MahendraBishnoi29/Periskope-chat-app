@@ -696,17 +696,19 @@ export default function Sidebar({
                       </div>
                     )}
 
-                    <div className="flex items-center space-x-1 mt-1">
-                      <Phone size={12} className="text-gray-400" />
-                      <span className="text-xs text-gray-400">
-                        {chat.phone}
-                      </span>
-                      {chat.extension && (
+                    {chat.phone && (
+                      <div className="flex items-center space-x-1 mt-1">
+                        <Phone size={12} className="text-gray-400" />
                         <span className="text-xs text-gray-400">
-                          +{chat.extension}
+                          {chat.phone}
                         </span>
-                      )}
-                    </div>
+                        {chat.extension && (
+                          <span className="text-xs text-gray-400">
+                            +{chat.extension}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="text-xs text-gray-400 text-right mt-1">
